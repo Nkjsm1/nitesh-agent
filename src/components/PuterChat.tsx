@@ -127,8 +127,14 @@ export default function PuterChat() {
     setLoading(true);
     
     try {
-      const response = await puter.ai.chat(input, { model });
-      const text = response?.message?.content?.[0]?.text || "No response";
+      const response: any = await puter.ai.chat(input, { model });
+      const content = response?.message?.content;
+      let text = "No response";
+      if (Array.isArray(content) && content[0]) {
+        text = content[0].text || "No response";
+      } else if (content?.text) {
+        text = content.text;
+      }
       const assistantMsg: Message = { role: "assistant", content: text, time: new Date().toLocaleTimeString() };
       setMessages(prev => [...prev, assistantMsg]);
       saveMemory(input, text);
@@ -153,8 +159,10 @@ export default function PuterChat() {
       const fetchResp = await fetch("https://r.jina.ai/" + crawlUrl);
       const text = await fetchResp.text();
       if (text.length > 100) {
-        const aiResp = await puter.ai.chat("Summarize: " + text.substring(0, 8000), { model });
-        setCrawlResult(aiResp.message.content[0].text);
+        const aiResp: any = await puter.ai.chat("Summarize: " + text.substring(0, 8000), { model });
+        const aiContent = aiResp?.message?.content;
+        const aiText = Array.isArray(aiContent) ? aiContent[0]?.text : aiContent?.text;
+        setCrawlResult(aiText || "No response");
       } else {
         setCrawlResult("Could not fetch content");
       }
