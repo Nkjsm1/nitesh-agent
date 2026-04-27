@@ -177,8 +177,9 @@ export default function PuterChat() {
     setImageGenerating(true);
     setGeneratedImage("");
     try {
-      const result = await puter.ai.txt2img(imagePrompt, { model: imageModel });
-      setGeneratedImage(result.src || result);
+      const result: any = await puter.ai.txt2img(imagePrompt, { model: imageModel });
+      const imgSrc = result?.src || result?.props?.src || String(result);
+      setGeneratedImage(imgSrc);
     } catch (error: unknown) {
       const errMsg = error instanceof Error ? error.message : "Error";
       alert("Error: " + errMsg);
