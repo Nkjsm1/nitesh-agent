@@ -128,7 +128,7 @@ export default function PuterChat() {
     
     try {
       const response = await puter.ai.chat(input, { model });
-      const text = response.message.content[0].text;
+      const text = response?.message?.content?.[0]?.text || "No response";
       const assistantMsg: Message = { role: "assistant", content: text, time: new Date().toLocaleTimeString() };
       setMessages(prev => [...prev, assistantMsg]);
       saveMemory(input, text);
